@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t geoteo/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run geoteo/react-test npm test -- --coverage
+
+after_sucess:
+  - docker build -t geoteo/multi-client ./client
+  - docker build -t geoteo/multi-nginx ./nginx
+  - docker build -t geoteo/multi-server ./server
+  - docker build -t geoteo/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push geoteo/multi-client
+  - docker push geoteo/multi-nginx
+  - docker push geoteo/multi-server
+  - docker push geoteo/multi-worker
