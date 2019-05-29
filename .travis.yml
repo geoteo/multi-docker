@@ -8,7 +8,7 @@ before_install:
 script:
   - docker run -e CI=true geoteo/react-test npm test -- --watchAll=false
 
-after_sucess:
+after_success:
   - docker build -t geoteo/multi-client ./client
   - docker build -t geoteo/multi-nginx ./nginx
   - docker build -t geoteo/multi-server ./server
